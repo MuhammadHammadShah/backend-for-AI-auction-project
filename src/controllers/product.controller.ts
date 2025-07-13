@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { ProductService } from '../services/product.services'
 import { AuthenticatedRequest } from '../middlewares/auth.middleware'
-import { IProduct } from '../models/product.model'
+import { IProduct, ProductModel } from '../models/product.model'
 import { CreateProductDTO } from '../types/product.types'
 
 export class ProductController {
@@ -157,6 +157,33 @@ export class ProductController {
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Failed'
             res.status(500).json({ message })
+        }
+    }
+    public readonly getWinner = async (
+        req: Request,
+        res: Response,
+    ): Promise<void> => {
+        try {
+            const { id } = req.params
+            const product = (await ProductModel.findById(id).populate(
+                'winner',
+                'name email role',
+            )) as IProduct
+
+            if (!product) {
+                res.status(404).json({ message: 'Product not found' })
+                return
+            }
+
+            if (!product.winner) {
+                res.status(200).json({ message: 'Winner not declared yet' })
+            } else {
+                res.status(200).json({ winner: product.winner })
+            }
+        } catch (err) {
+            const msg =
+                err instanceof Error ? err.message : 'Error fetching winner'
+            res.status(500).json({ message: msg })
         }
     }
 }

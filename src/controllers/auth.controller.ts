@@ -1,7 +1,8 @@
 // src/controllers/auth.controller.ts
 import { Request, Response } from 'express'
 import { AuthService } from '../services/auth.services'
-import { IUser } from '../models/user.model'
+import { IUser, UserModel } from '../models/user.model'
+import { AuthenticatedRequest } from '../middlewares/auth.middleware'
 
 export class AuthController {
     private readonly authService = new AuthService()
@@ -79,6 +80,31 @@ export class AuthController {
         } catch (err) {
             const message = err instanceof Error ? err.message : 'Login failed'
             res.status(401).json({ message }) // Changed to 401 for login failures
+        }
+    }
+
+    public readonly me = async (
+        req: AuthenticatedRequest,
+        res: Response,
+    ): Promise<void> => {
+        try {
+            const userId = req.user?.id
+            if (!userId) {
+                res.status(401).json({ message: 'Unauthorized' })
+                return
+            }
+
+            const user = await UserModel.findById(userId).select('-password')
+            if (!user) {
+                res.status(404).json({ message: 'User not found' })
+                return
+            }
+
+            res.status(200).json({ user })
+        } catch (err) {
+            const message =
+                err instanceof Error ? err.message : 'Failed to fetch user'
+            res.status(500).json({ message })
         }
     }
 }

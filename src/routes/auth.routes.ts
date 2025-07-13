@@ -53,6 +53,7 @@
 
 import { Router } from 'express'
 import { AuthController } from '../controllers/auth.controller'
+import { authenticate } from '../middlewares/auth.middleware'
 
 const router = Router()
 const controller = new AuthController()
@@ -104,5 +105,45 @@ router.post('/register', controller.register)
  *         description: Invalid credentials
  */
 router.post('/login', controller.login)
+
+/**
+ * @swagger
+ * /auth/me:
+ *   get:
+ *     summary: Get current authenticated user
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Authenticated user details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 user:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     name:
+ *                       type: string
+ *                     email:
+ *                       type: string
+ *                     role:
+ *                       type: string
+ *                       enum: [buyer, seller]
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       401:
+ *         description: Unauthorized - Token missing or invalid
+ */
+
+router.get('/me', authenticate, controller.me)
 
 export default router

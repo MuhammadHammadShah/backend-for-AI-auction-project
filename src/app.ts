@@ -36,6 +36,8 @@ app.use('/auth', authRoutes)
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
+// declare winner
+
 // Test Route
 app.get('/', (req, res) => {
     logger.info('Root endpoint hit')

@@ -1,8 +1,9 @@
 import { Schema, model, Document, Types } from 'mongoose'
+import { IUser } from './user.model'
 
 export interface IBid extends Document {
     amount: number
-    bidder: Types.ObjectId
+    bidder: Types.ObjectId | IUser
     product: Types.ObjectId
     createdAt: Date
 }

@@ -235,5 +235,6 @@ router.get('/:id/suggest-price', bidController.suggestPrice)
  *         description: Status returned
  */
 router.get('/:id/status', productCtrl.getStatus)
+router.get('/:id/winner', productCtrl.getWinner)
 
 export default router

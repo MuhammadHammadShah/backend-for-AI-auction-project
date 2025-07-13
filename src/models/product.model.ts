@@ -2,6 +2,7 @@ import { Schema, model, Document, Types } from 'mongoose'
 
 export interface IProduct extends Document {
     title: string
+    winner?: Types.ObjectId | null
     description?: string
     price: number
     images?: string[]
@@ -21,6 +22,11 @@ const productSchema = new Schema<IProduct>(
         seller: { type: Schema.Types.ObjectId, ref: 'User', required: true },
         endTime: { type: Date, required: true },
         status: { type: String, enum: ['active', 'ended'], default: 'active' },
+        winner: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            default: null,
+        },
     },
     { timestamps: true },
 )
