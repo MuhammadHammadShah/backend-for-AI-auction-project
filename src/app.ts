@@ -5,6 +5,8 @@ import productionLogger from './logger'
 import marketPlaceRouter from './routes/marketPlace.route'
 import authRoutes from './routes/auth.routes'
 import { config } from './config/config'
+import swaggerUi from 'swagger-ui-express'
+import { swaggerSpec } from './config/swagger'
 
 const app = express()
 
@@ -28,8 +30,11 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' })) // Parse URL-enco
 
 // Routes
 app.use('/products', marketPlaceRouter)
-
 app.use('/auth', authRoutes)
+
+// swagger
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // Test Route
 app.get('/', (req, res) => {
