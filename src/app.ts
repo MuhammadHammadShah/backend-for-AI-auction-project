@@ -1,28 +1,40 @@
 // app.ts
 import express from 'express'
+import mongoose from 'mongoose'
 import productionLogger from './logger'
+import marketPlaceRouter from './routes/marketPlace.route'
+import authRoutes from './routes/auth.routes'
+import { config } from './config/config'
 
 const app = express()
 
-// middleware
-
+// Logger middleware
 const logger = productionLogger()
 
+// MongoDB Connection
+mongoose
+    .connect(config.mongoURI)
+    .then(() => logger.info('🟢 MongoDB connected'))
+    .catch((err) => {
+        logger.error('🔴 MongoDB connection error: ', err)
+        process.exit(1)
+    })
+
+// Middleware
 app.use(express.json())
 
-// routes
+app.use(express.json({ limit: '10mb' })) // Parse JSON bodies
+app.use(express.urlencoded({ extended: true, limit: '10mb' })) // Parse URL-encoded bodies
+
+// Routes
+app.use('/products', marketPlaceRouter)
+
+app.use('/auth', authRoutes)
+
+// Test Route
 app.get('/', (req, res) => {
     logger.info('Root endpoint hit')
-    logger.error('Root endpoint hit')
-    logger.warn('Root endpoint hit')
     res.send('hello world')
 })
-
-app.post('/event', () => {})
-app.post('/quests/complete', () => {})
-app.post('hearts/refill', () => {})
-app.get('user/:id/status', () => {})
-app.get('quests/daily', () => {})
-app.get('leaderboard', () => {})
 
 export default app

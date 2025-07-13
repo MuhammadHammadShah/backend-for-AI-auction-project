@@ -1,22 +1,9 @@
 // server.ts
 import app from './app'
+import { config } from './config/config'
 
-const PORT = 3000
+const PORT = config.port
 
 app.listen(PORT, () => {
     console.log(`✅ Server is running at http://localhost:${PORT}`)
 })
-
-function create_name(name: string) {
-    const user = {
-        name: 'khan ',
-    }
-
-    const fname = user.name
-
-    console.log(fname)
-
-    return name + fname
-}
-
-create_name('oop ')
